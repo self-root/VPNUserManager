@@ -39,7 +39,7 @@ class VPNManager:
     @staticmethod
     def parseConf(conf_: str) -> dict[str, str]:
         confPath = "/root"
-        wg = wgconfig.WGConfig(os.path.join(confPath, conf_))
+        wg = wgconfig.WGConfig(os.path.join(confPath, conf_ + ".conf"))
         wg.read_file()
         interface = wg.get_interface()
         peer = wg.get_peer(wg.get_peers()[0])
