@@ -137,7 +137,7 @@ def userConf():
         if authResult.errCode == AuthErrCode.SUCCESS:
             #TODO: change the request method to post and add json body that has device information
             device = json.loads(request.data)
-            conf = VPNManager.getUserConf(authResult.mail, {"id": device})
+            conf = VPNManager.getUserConf(authResult.mail, device)
             if conf:
                 return conf, 200
             else:
