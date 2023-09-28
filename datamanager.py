@@ -4,12 +4,12 @@ from peewee import (MySQLDatabase, Model,
             )
 import datetime
 from utils import Utility
-
+import os
 
 db = MySQLDatabase("vpn_user_db",
                         host="localhost",
-                        user="root"
-                        )# password="R00t_247"
+                        user=os.getenv("VPN_DB_USERNAME"),
+                        password=os.getenv("VPN_DB_PASSWORD"))
 class BaseModel(Model):
     class Meta:
         database = db
