@@ -7,6 +7,7 @@ from email.mime.multipart import MIMEMultipart
 from enum import Enum
 from jinja2 import Environment, FileSystemLoader
 from apiexception import CodeDoesNotMatch, CodeExpired
+import asyncio
 
 class Mail:
     def __init__(self, subject: str, to: str, body: str) -> None:
@@ -18,7 +19,7 @@ class Mail:
         self.to = to
         self.body = body
 
-    def send(self):
+    async def send(self):
         multipart = MIMEMultipart()
         multipart["Subject"] = self.subject
         multipart["From"]= self.__from
@@ -42,7 +43,7 @@ class MailType(Enum):
 
 class PostOffice:
     @staticmethod
-    async def sendVerificationMail(mail: str):
+    def sendVerificationMail(mail: str):
         verificationCode = PostOffice.generateRandomDigits()
         PostOffice.saveVerificationCode(mail, verificationCode)
         print("User mail: ", mail)
@@ -50,7 +51,7 @@ class PostOffice:
             "Verifiy email",
             mail,
             PostOffice.renderMailBody(MailType.VERIFICATION, {"code": verificationCode}))
-        await verifMail.send()
+        asyncio.run(verifMail.send()) 
 
     @staticmethod
     def generateRandomDigits() -> int:

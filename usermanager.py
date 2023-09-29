@@ -1,10 +1,8 @@
 from mail import PostOffice
 import datamanager
 from peewee import IntegrityError
-from apiexception import MailAlreadyExist
 from tokenfactory import TokenFactory
-from auth import Auth, AuthResult, AuthErrCode
-import asyncio
+from auth import Auth, AuthErrCode
 
 class UserManager:
     @staticmethod
@@ -55,7 +53,7 @@ class UserManager:
                 try:
                     datamanager.saveUser(form["mail"], form["pwd"])
                     #send verification mail to user
-                    asyncio.run(PostOffice.sendVerificationMail(form["mail"]))
+                    PostOffice.sendVerificationMail(form["mail"])
                     #create temporary token
                     return "added", 200
                 except IntegrityError:
@@ -85,7 +83,7 @@ class UserManager:
     
     @staticmethod
     def generateNewCode(mail: str):
-        asyncio.run(PostOffice.sendVerificationMail(mail))
+        PostOffice.sendVerificationMail(mail)
     @staticmethod
     def makeUserVerified(mail: str):
         datamanager.setUserVerified(mail)
