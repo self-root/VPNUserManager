@@ -77,6 +77,12 @@ def verifyMail():
         except Exception as e:
             print("ERROR::: ", e)
             return "Unknown error", 500
+    else:
+        res = {
+            "error": "payload_too_large",
+            "error_description": "The body length exceed the limit"
+        }
+        return res, 413
 
 @app.post("/vpn/userconf")
 def userConf():
