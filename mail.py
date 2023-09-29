@@ -50,7 +50,7 @@ class PostOffice:
             "Verifiy email",
             mail,
             PostOffice.renderMailBody(MailType.VERIFICATION, {"code": verificationCode}))
-        verifMail.send()
+        await verifMail.send()
 
     @staticmethod
     def generateRandomDigits() -> int:
