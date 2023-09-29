@@ -48,6 +48,7 @@ def signup():
 @app.post("/vpn/mail/verify")
 def verifyMail():
     contentLength = request.headers.get("Content-Length", type=int)
+    print("COntent length: ", contentLength)
     if request.is_json and contentLength <= 160:
         try:
             data = json.loads(request.data)
