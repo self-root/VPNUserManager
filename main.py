@@ -31,7 +31,7 @@ def login():
 @app.post("/vpn/signup")
 def signup():
     contentLength = request.headers.get("Content-Length", type=int)
-    if request.is_json and contentLength <= 160:
+    if contentLength <= 160:
         try:
             forms = json.loads(request.data)
             print(request.headers.get("Content-Length", type=int))            
@@ -49,7 +49,7 @@ def signup():
 def verifyMail():
     contentLength = request.headers.get("Content-Length", type=int)
     print("COntent length: ", contentLength)
-    if request.is_json and contentLength <= 160:
+    if contentLength <= 160:
         try:
             data = json.loads(request.data)
             code = data["code"]
@@ -88,7 +88,7 @@ def verifyMail():
 @app.post("/vpn/userconf")
 def userConf():
     contentLength = request.headers.get("Content-Length", type=int)
-    if not request.is_json or contentLength > 160:
+    if contentLength > 160:
         return "bad request", 400
     if Utility.hasAuthHeader(request.headers):
         auth = Auth.getAuth(request.headers.get("Authorization"))
