@@ -68,6 +68,12 @@ def verifyMail():
                     "error_description": "Verification code has expired, check your mail for the new one"
                 }
                 return res, 401
+        except json.decoder.JSONDecodeError:
+            res = {
+                    "error": "bad_request",
+                    "error_description": "A json payload is expected"
+                }
+            return res, 400
         except CodeDoesNotMatch:
             res = {
                 "error": "code_not_match",
@@ -75,9 +81,9 @@ def verifyMail():
             }
             return res, 403
         
-        #except Exception as e:
-        #    print("ERROR::: ", e)
-        #    return "Unknown error", 500
+        except Exception as e:
+            print("ERROR::: ", e)
+            return "Unknown error", 500
     else:
         res = {
             "error": "payload_too_large",
