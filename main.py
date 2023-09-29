@@ -10,11 +10,11 @@ from vpnmanager import VPNManager
 
 app = Flask(__name__)
 
-@app.get("/vpnusers/ping")
+@app.get("/vpn/ping")
 def ping():
     return "pong", 200
 
-@app.get("/vpnusers/login")
+@app.get("/vpn/login")
 def login():
     # Check if it has auth header
     # check auth type
@@ -27,52 +27,8 @@ def login():
     if Utility.hasAuthHeader(request.headers):
         auth = Auth.getAuth(request.headers.get("Authorization"))
         return UserManager.login(auth)
-        """if auth.atype == AuthType.NONE:
-            return "Authorization header not properly formated", 400
-        else:
-            try:
-                token, mail = auth.authenticate()
-                res = {
-                    "token": token,
-                    "mail": mail
-                }
-                return res, 200
-            except UnverifiedUser as e:
-                tempToken = auth.makeTempToken()
-                UserManager.generateNewCode(auth.mail)
-                res = {
-                    "err": "unverifieduser",
-                    "temptoken": tempToken
-                }
-                return res, 401
-            except UnverifiedUserToken:
-                res = {
-                    "err": "unverifiedusertoken",
-                    "temptoken": token
-                }
-                return res, 401
-            except UserNotFound:
-                return "User not found", 404
-            except InvalidToken:
-                res = {
-                    "err": "invalidtoken",
-                }
-                return res, 401
-            except jwt.InvalidTokenError as e:
-                print(f"Invalid token: {e}")
-                res = {
-                    "err": "invalidtoken",
-                }
-                return res, 401
-
-            except Exception as e:
-                print(f"ERROR: {e}")
-                return "Internall error", 500
-    else:
-        return "Bad request", 400
-    """
     
-@app.post("/vpnusers/signup")
+@app.post("/vpn/signup")
 def signup():
     contentLength = request.headers.get("Content-Length", type=int)
     if request.is_json and contentLength <= 160:
@@ -89,7 +45,7 @@ def signup():
     else:
         return "payload_too_large", 413
 
-@app.post("/vpnusers/mail/verify")
+@app.post("/vpn/mail/verify")
 def verifyMail():
     contentLength = request.headers.get("Content-Length", type=int)
     if request.is_json and contentLength <= 160:
@@ -98,10 +54,9 @@ def verifyMail():
             code = data["code"]
             mail = data["mail"]
             PostOffice.verify(mail, code)
-            token = UserManager.makeUserToken(mail)
+            #token = UserManager.makeUserToken(mail)
             UserManager.makeUserVerified(mail)
             res = {
-                "token": token,
                 "mail": mail
             }
             return res, 200
@@ -123,7 +78,7 @@ def verifyMail():
             print("ERROR::: ", e)
             return "Unknown error", 500
 
-@app.post("/vpnuser/userconf")
+@app.post("/vpn/userconf")
 def userConf():
     contentLength = request.headers.get("Content-Length", type=int)
     if not request.is_json or contentLength > 160:
