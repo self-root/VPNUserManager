@@ -75,9 +75,9 @@ def verifyMail():
             }
             return res, 403
         
-        except Exception as e:
-            print("ERROR::: ", e)
-            return "Unknown error", 500
+        #except Exception as e:
+        #    print("ERROR::: ", e)
+        #    return "Unknown error", 500
     else:
         res = {
             "error": "payload_too_large",
