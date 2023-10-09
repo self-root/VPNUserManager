@@ -12,7 +12,7 @@ class UserManager:
             response = {
                 "token": authResult.token,
                 "mail": authResult.mail,
-                "end_sub": datamanager.getEndSub(authResult.mail)
+                "end_sub": datamanager.getEndSub(authResult.mail).strftime("%B %d, %Y")
                 }
             
             print(response)
