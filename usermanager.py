@@ -15,6 +15,8 @@ class UserManager:
                 "end_sub": datamanager.getEndSub(authResult.mail)
                 }
             
+            print(response)
+            
             return response, 200
         
         elif authResult.errCode == AuthErrCode.INVALID_TOKEN:
