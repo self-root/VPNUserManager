@@ -11,7 +11,8 @@ class UserManager:
         if authResult.errCode == AuthErrCode.SUCCESS:
             response = {
                 "token": authResult.token,
-                "mail": authResult.mail
+                "mail": authResult.mail,
+                "end_sub": datamanager.getEndSub(authResult.mail)
                 }
             
             return response, 200
