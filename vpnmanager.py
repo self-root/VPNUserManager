@@ -6,24 +6,27 @@ import subprocess
 
 class VPNManager:
     @staticmethod
-    def getUserConf(mail: str, device: dict[str, str]) -> dict[str,str]:
+    def getUserConf(mail: str, device: dict[str, str]) -> dict[str,str] | None:
         if VPNManager.hasActiveSubsciption(mail):
-            deviceCount = datamanager.getDeviceCount(mail)
-            if deviceCount == 0:
-                # Create new conf, 
-                print(device)
-                confName = VPNManager.makeConf(mail, device["id"])
-                # save it to database,
-                device["config"] = confName
-                datamanager.addUserDevice(mail, device)
-                # then load it
+            confName = datamanager.getDeviceConf(mail, device["id"])
+            if confName:
                 conf = VPNManager.parseConf(confName)
                 return conf
-
-            elif deviceCount < 3:
-                confName = datamanager.getDeviceConf(mail, device["id"])
-                conf = VPNManager.parseConf(confName)
-                return conf
+            else:
+                deviceCount = datamanager.getDeviceCount(mail)
+                if deviceCount < 3:
+                    # Create new conf, 
+                    print(device)
+                    confName = VPNManager.makeConf(mail, device["id"])
+                    # save it to database,
+                    device["config"] = confName
+                    datamanager.addUserDevice(mail, device)
+                    # then load it
+                    conf = VPNManager.parseConf(confName)
+                    return conf
+                else:
+                    # Excess device
+                    return None
             
         # User already has 3 registered device
             
@@ -48,7 +51,7 @@ class VPNManager:
     
     @staticmethod
     def makeConf(mail: str, deviceId: str) -> str:
-        confName = VPNManager.makeConfName(mail, deviceId)
+        confName = deviceId
         subprocess.run(["/root/./wireguard_cl_add.sh", confName])
         return confName
 
@@ -63,6 +66,23 @@ class VPNManager:
     def cleanStr(txt: str)->str:
         return txt.replace(".","").replace("@","").replace("_", "").replace("-","")
     
+    @staticmethod
+    def getDevices(email : str) -> list[dict[str,str]]:
+        devices = datamanager.getDevices(mail)
+        # TODO: convert devices into dict
+        devices_ = []
+        for device in devices:
+            d = {
+                "device_id" : device.d_id,
+                "device_os" : device.d_os,
+                "device_name" : device.d_name,
+                "devoce_type" : device.d_type,
+
+            }
+        devices_.append(d)
+
+        return devices_
+
 
 if __name__=="__main__":
     #VPNManager.getUserConf("s", "d")

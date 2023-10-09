@@ -69,9 +69,12 @@ def getDeviceConf(mail: str, deviceId: str) -> str:
             User
         ).join(Device).where(Device.d_id==deviceId)
         .join(User).where(Device.user.mail==mail))[0]"""
-    device = Device.get(d_id=deviceId)
-    if device.user.mail == mail:
-        return device.config
+    device = Device.get_or_none(d_id=deviceId) #Should be getOrNone??
+    if device:
+        if device.user.mail == mail:
+            return device.config
+    return device
+
 
 def addUserDevice(mail: str, device: dict[str, str]) -> Device:
     user = User.get_or_none(mail=mail)

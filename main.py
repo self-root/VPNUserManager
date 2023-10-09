@@ -111,7 +111,7 @@ def userConf():
             else:
                 result = {
                     "error": "device_eccess",
-                    "error_description": "You've reached the maximum number of 3 regustered device"
+                    "error_description": "You've reached the maximum number of 3 regustered device, or has no active subscription"
                 }
 
                 return result, 403
@@ -122,6 +122,33 @@ def userConf():
                 }
 
             return result, 401
+    else:
+        result = {
+                    "error": "unauthorized",
+                    "error_description": "An access token is require in the auth header to make this request"
+            }
+
+        return result, 401
+    
+@app.get("/vpn/devices")
+def userDevices():
+    if Utility.hasAuthHeader(request.headers):
+        auth = Auth.getAuth(request.headers.get("Authorization"))
+        if auth.atype != AuthType.BEARER:
+            return "Authorization header not properly formated", 400
+        
+        authResult = auth.authenticate()
+        if authResult.errCode == AuthErrCode.SUCCESS:
+            devices = VPNManager.getDevices(authResult.mail)
+            return devices, 200
+        else: 
+            result = {
+                    "error": "invalid_token",
+                    "error_description": "An access token is require in the auth header to make this request"
+                }
+
+            return result, 401
+    
     else:
         result = {
                     "error": "unauthorized",
