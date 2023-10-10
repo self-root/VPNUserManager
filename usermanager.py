@@ -9,10 +9,13 @@ class UserManager:
     def login(auth : Auth):
         authResult = auth.authenticate()
         if authResult.errCode == AuthErrCode.SUCCESS:
+            endsub = datamanager.getEndSub(authResult.mail)
+            if endsub:
+                endsub = endsub.strftime("%B %d, %Y")
             response = {
                 "token": authResult.token,
                 "mail": authResult.mail,
-                "end_sub": datamanager.getEndSub(authResult.mail).strftime("%B %d, %Y")
+                "end_sub": endsub
                 }
             
             print(response)
