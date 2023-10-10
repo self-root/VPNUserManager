@@ -131,12 +131,4 @@ if __name__ == "__main__":
         #print(f"Conf@: {getDeviceConf('oscarmendeleiev@gmail.com', 'moto_3328')}")
 
         #print(f"User device count: {deviceCount('oscarmendeleiev@gmail.com')}")
-        mail = "oscarmendeleiev@gmail.com"
-        deviceId = "moto_3328"
-        userconf = "oscar12ww4.conf"
-        #device =  addUserDevice(mail, {"id":deviceId, "config": userconf})
-        #addUserConf(userconf, device)
-
-        #removeDevice(deviceId, mail)
-        #addSubscription(mail, datetime.date(2024, 1, 12))
-        print(getEndSub(mail))
+        
