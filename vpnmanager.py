@@ -6,7 +6,7 @@ import subprocess
 
 class VPNManager:
     @staticmethod
-    def getUserConf(mail: str, device: dict[str, str]) -> dict[str,str] | None:
+    def getUserConf(mail: str, device: dict[str, str]) -> dict[str,str]:
         if VPNManager.hasActiveSubsciption(mail):
             confName = datamanager.getDeviceConf(mail, device["id"])
             if confName:
