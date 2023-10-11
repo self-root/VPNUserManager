@@ -39,20 +39,24 @@ class Device(BaseModel):
       
 
 def saveUser(mail: str, password: str):
-    pwd = Utility.hashPassword(password)
-    user = User.create(mail=mail, password=pwd)
-    user.save()
+    with db:
+        pwd = Utility.hashPassword(password)
+        user = User.create(mail=mail, password=pwd)
+        user.save()
 
 def setUserVerified(mail: str):
-    user = User.get(mail=mail)
-    user.verified = True
-    user.save()
+    with db:
+        user = User.get(mail=mail)
+        user.verified = True
+        user.save()
 
 def getDevices(mail: str):
-    return (Device.select(Device, User).join(User).where(Device.user.mail==mail))
+    with db:
+        return (Device.select(Device, User).join(User).where(Device.user.mail==mail))
 
 def getDevice(deviceId: str) -> Device:
-    return Device.get_or_none(d_id=deviceId)
+    with db:
+        return Device.get_or_none(d_id=deviceId)
 
 def getDeviceCount(mail: str):
     return len(getDevices(mail))
@@ -69,45 +73,50 @@ def getDeviceConf(mail: str, deviceId: str) -> str:
             User
         ).join(Device).where(Device.d_id==deviceId)
         .join(User).where(Device.user.mail==mail))[0]"""
-    device = Device.get_or_none(d_id=deviceId) #Should be getOrNone??
-    if device:
-        if device.user.mail == mail:
-            return device.config
-    return device
+    with db:
+        device = Device.get_or_none(d_id=deviceId) #Should be getOrNone??
+        if device:
+            if device.user.mail == mail:
+                return device.config
+        return device
 
 
 def addUserDevice(mail: str, device: dict[str, str]) -> Device:
-    user = User.get_or_none(mail=mail)
-    if user:
-        device_ = Device.create(d_id=device['id'], config=device["config"], user=user)
-        device_.save()
-        return device_
+    with db:
+        user = User.get_or_none(mail=mail)
+        if user:
+            device_ = Device.create(d_id=device['id'], config=device["config"], user=user)
+            device_.save()
+            return device_
 
 
 def removeDevice(deviceId: str, mail: str):
-    device = getDevice(deviceId)
-    if device.user.mail == mail:
-        device.delete_instance()
+    with db:
+        device = getDevice(deviceId)
+        if device.user.mail == mail:
+            device.delete_instance()
 
 def addSubscription(mail: str, untilDate: datetime.date):
-    user_ = User.get_or_none(mail=mail)
-    if user_:
-        sub = Subscription.get_or_none(user=user_.id)
-        if sub:
-            sub.end_sub = untilDate
-            sub.save()
-        
-        else:
-            sub = Subscription.create(end_sub=untilDate, user=user_)
-            sub.save()
+    with db:
+        user_ = User.get_or_none(mail=mail)
+        if user_:
+            sub = Subscription.get_or_none(user=user_.id)
+            if sub:
+                sub.end_sub = untilDate
+                sub.save()
+            
+            else:
+                sub = Subscription.create(end_sub=untilDate, user=user_)
+                sub.save()
 
 def getEndSub(mail: str) -> datetime.date:
-    user_ = User.get_or_none(mail=mail)
-    if user_:
-        sub = Subscription.get_or_none(user=user_.id)
-        if sub:
-            return sub.end_sub
-    
+    with db:
+        user_ = User.get_or_none(mail=mail)
+        if user_:
+            sub = Subscription.get_or_none(user=user_.id)
+            if sub:
+                return sub.end_sub
+        
 
 
 if __name__ == "__main__":
