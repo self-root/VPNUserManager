@@ -8,11 +8,11 @@ from usermanager import UserManager
 from mail import PostOffice
 from tokenfactory import Intent
 from vpnmanager import VPNManager
-from mlogger import standardHandler
+from mlogger import handler
 import logging
 
 app = Flask(__name__)
-app.logger.addHandler(standardHandler)
+app.logger.addHandler(handler)
 app.logger.setLevel(logging.INFO)
 
 
