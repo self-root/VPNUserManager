@@ -3,6 +3,7 @@ import datamanager
 from peewee import IntegrityError
 from tokenfactory import TokenFactory
 from auth import Auth, AuthErrCode
+from mlogger import logger
 
 class UserManager:
     @staticmethod
@@ -64,12 +65,16 @@ class UserManager:
                     PostOffice.sendVerificationMail(email)
                     #create temporary token
                     return "added", 200
-                except IntegrityError:
+                except IntegrityError as e:
                     response = {
                         "error": "conflict",
                         "error_description": "Email address already registered"
                     }
+                    logger.exception(f"handleSignup: exception")
                     return response, 409
+                
+                except Exception as e:
+                    logger.exception(f"handleSignup: exception")
                 
             else:
                 print(f"Invalid mail {form['mail']}")
@@ -83,6 +88,7 @@ class UserManager:
                         "error": "bad_request",
                         "error_description": "The form did not contain mail and pwd"
                     }
+            logger.warning(f"Signup {email}: Email address not valid")
             return response, 400
         
     @staticmethod
