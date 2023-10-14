@@ -66,6 +66,8 @@ class Auth:
             authResult.errCode = AuthErrCode.BAD_REQUEST
             return authResult
         self.mail, password = credentials
+        self.mail = self.mail.replace(" ", "")
+        password = password.replace(" ", "")
         authResult.mail = self.mail
         user = User.get_or_none(mail=self.mail, password=Utility.hashPassword(password))
         if user:

@@ -55,11 +55,13 @@ class UserManager:
     @staticmethod
     def handleSignup(form: dict[str, str]) -> str:
         if "mail" and "pwd" in form:
-            if PostOffice.mailAddressValid(form["mail"]):
+            email = form["mail"].replace(" ", "")
+            password = form["pwd"].replace(" ", "")
+            if PostOffice.mailAddressValid(email):
                 try:
-                    datamanager.saveUser(form["mail"], form["pwd"])
+                    datamanager.saveUser(email, password)
                     #send verification mail to user
-                    PostOffice.sendVerificationMail(form["mail"])
+                    PostOffice.sendVerificationMail(email)
                     #create temporary token
                     return "added", 200
                 except IntegrityError:
