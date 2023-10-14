@@ -9,9 +9,12 @@ from mail import PostOffice
 from tokenfactory import Intent
 from vpnmanager import VPNManager
 from mlogger import standardHandler
+import logging
 
 app = Flask(__name__)
 app.logger.addHandler(standardHandler)
+app.logger.setLevel(logging.INFO)
+
 
 @app.get("/vpn/ping")
 def ping():
