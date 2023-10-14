@@ -8,10 +8,10 @@ from usermanager import UserManager
 from mail import PostOffice
 from tokenfactory import Intent
 from vpnmanager import VPNManager
-from mlogger import logger
+from mlogger import standardHandler
 
 app = Flask(__name__)
-app.logger.removeHandler(default_handler)
+app.logger.addHandler(standardHandler)
 
 @app.get("/vpn/ping")
 def ping():
@@ -27,14 +27,14 @@ def login():
     #   verify token validity if token
     # Send user vpn config
     
-    logger.info(f"{request.remote_addr} Login request")
+    app.logger.info(f"{request.remote_addr} Login request")
     if Utility.hasAuthHeader(request.headers):
         auth = Auth.getAuth(request.headers.get("Authorization"))
         return UserManager.login(auth)
     
 @app.post("/vpn/signup")
 def signup():
-    logger.info(f"{request.remote_addr} Signup request")
+    app.logger.info(f"{request.remote_addr} Signup request")
     contentLength = request.headers.get("Content-Length", type=int)
     if contentLength <= 160:
         try:
@@ -42,21 +42,21 @@ def signup():
             print(request.headers.get("Content-Length", type=int))            
             return UserManager.handleSignup(forms)
         except json.JSONDecodeError as e:
-            logger.exception("Json error while handling signuo form")
+            app.logger.exception("Json error while handling signuo form")
             response = {
                 "error": "bad_request",
                 "error_description": "The json data can not be parsed"
             }
             return response, 400
         except Exception as e:
-            logger.exception("Error with signup")
+            app.logger.exception("Error with signup")
     else:
-        logger.critical(f"{signup.__name__}: Payload too large, size = {contentLength}")
+        app.logger.critical(f"{signup.__name__}: Payload too large, size = {contentLength}")
         return "payload_too_large", 413
 
 @app.post("/vpn/mail/verify")
 def verifyMail():
-    logger.info(f"{request.remote_addr} Mail verification")
+    app.logger.info(f"{request.remote_addr} Mail verification")
     contentLength = request.headers.get("Content-Length", type=int)
     if contentLength <= 160:
         try:
@@ -75,37 +75,37 @@ def verifyMail():
                     "error": "code_expired",
                     "error_description": "Verification code has expired, check your mail for the new one"
                 }
-                logger.info(f"{mail}: code_expired")
+                app.logger.info(f"{mail}: code_expired")
                 return res, 401
         except json.decoder.JSONDecodeError as e:
             res = {
                     "error": "bad_request",
                     "error_description": "A json payload is expected"
                 }
-            logger.exception(f"{verifyMail.__name__}: No json Payload")
+            app.logger.exception(f"{verifyMail.__name__}: No json Payload")
             return res, 400
         except CodeDoesNotMatch:
             res = {
                 "error": "code_not_match",
                 "error_description": "Code provided to not match"
             }
-            logger.info(f"{mail}: Verification code does not match")
+            app.logger.info(f"{mail}: Verification code does not match")
             return res, 403
         
         except Exception as e:
-            logger.exception(f"{verifyMail.__name__}: Error occured")
+            app.logger.exception(f"{verifyMail.__name__}: Error occured")
             return "Unknown error", 500
     else:
         res = {
             "error": "payload_too_large",
             "error_description": "The body length exceed the limit"
         }
-        logger.critical(f"{signup.__name__}: Payload too large, size = {contentLength}")
+        app.logger.critical(f"{signup.__name__}: Payload too large, size = {contentLength}")
         return res, 413
 
 @app.post("/vpn/userconf")
 def userConf():
-    logger.info(f"{request.remote_addr} Get user conf")
+    app.logger.info(f"{request.remote_addr} Get user conf")
     contentLength = request.headers.get("Content-Length", type=int)
     if contentLength > 160:
         return "bad request", 400
@@ -126,26 +126,26 @@ def userConf():
                     "error": "device_eccess",
                     "error_description": "You've reached the maximum number of 3 regustered device, or has no active subscription"
                 }
-                logger.info(f"{authResult.mail}: device_eccess")
+                app.logger.info(f"{authResult.mail}: device_eccess")
                 return result, 403
         else:
             result = {
                 "error": "invalid_token",
                 "error_description": "An access token is require in the auth header to make this request"
                 }
-            logger.info(f"{authResult.mail}: invalid_token")
+            app.logger.info(f"{authResult.mail}: invalid_token")
             return result, 401
     else:
         result = {
             "error": "unauthorized",
             "error_description": "An access token is require in the auth header to make this request"
         }
-        logger.info(f"{userConf.__name__}: An access token is require in the auth header to make this request")
+        app.logger.info(f"{userConf.__name__}: An access token is require in the auth header to make this request")
         return result, 401
     
 @app.get("/vpn/devices")
 def userDevices():
-    logger.info(f"{request.remote_addr} Get devices")
+    app.logger.info(f"{request.remote_addr} Get devices")
     if Utility.hasAuthHeader(request.headers):
         auth = Auth.getAuth(request.headers.get("Authorization"))
         if auth.atype != AuthType.BEARER:
@@ -160,7 +160,7 @@ def userDevices():
                     "error": "invalid_token",
                     "error_description": "An access token is require in the auth header to make this request"
                 }
-            logger.info(f"{authResult.mail}: invalid_token")
+            app.logger.info(f"{authResult.mail}: invalid_token")
             return result, 401
     
     else:
@@ -173,7 +173,7 @@ def userDevices():
     
 @app.delete("/vpn/devices/delete/<device_id>")
 def removeDevice(device_id: str):
-    logger.info(f"{request.remote_addr} Remove device")
+    app.logger.info(f"{request.remote_addr} Remove device")
     if Utility.hasAuthHeader(request.headers):
         auth = Auth.getAuth(request.headers.get("Authorization"))
         if auth.atype != AuthType.BEARER:
