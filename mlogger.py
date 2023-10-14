@@ -1,16 +1,14 @@
 import logging
+from logging.handlers import RotatingFileHandler
 
 logger = logging.getLogger(__name__)
 
-errorHandler = logging.FileHandler("/var/log/groot_err.log")
-standardHandler = logging.FileHandler("/var/log/groot_std.log")
+handler = RotatingFileHandler("/var/log/groot.log", maxBytes=1000, backupCount=1)
 
-errorHandler.setLevel(logging.ERROR)
-standardHandler.setLevel(logging.DEBUG)
+
+handler.setLevel(logging.INFO)
 
 formatter = logging.Formatter("%(asctime)s [%(levelname)s] - %(name)s %(message)s")
-errorHandler.setFormatter(formatter)
-standardHandler.setFormatter(formatter)
+handler.setFormatter(formatter)
 
-logger.addHandler(errorHandler)
-logger.addHandler(standardHandler)
+logger.addHandler(handler)
