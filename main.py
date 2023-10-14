@@ -1,4 +1,5 @@
 from flask import Flask, request
+from flask.logging import default_handler
 import json
 from utils import Utility
 from auth import Auth, AuthType, AuthErrCode
@@ -10,6 +11,7 @@ from vpnmanager import VPNManager
 from mlogger import logger
 
 app = Flask(__name__)
+app.logger.removeHandler(default_handler)
 
 @app.get("/vpn/ping")
 def ping():
