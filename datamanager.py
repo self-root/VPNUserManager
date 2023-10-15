@@ -85,7 +85,14 @@ def addUserDevice(mail: str, device: dict[str, str]) -> Device:
     with db:
         user = User.get_or_none(mail=mail)
         if user:
-            device_ = Device.create(d_id=device['id'], config=device["config"], user=user)
+            device_ = Device.create(
+                d_id=device['id'], 
+                d_name=device["name"], 
+                d_os=device["os"], 
+                config=device["config"],
+                d_type=device["type"], 
+                user=user
+            )
             device_.save()
             return device_
 
