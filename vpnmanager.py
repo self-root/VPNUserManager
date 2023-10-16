@@ -4,6 +4,8 @@ import datetime
 import os
 import subprocess
 from mlogger import logger
+from wg_client_service.wg_conf_client import WgConfServiceClient
+import json
 
 class VPNManager:
     @staticmethod
@@ -42,18 +44,14 @@ class VPNManager:
     
     @staticmethod
     def parseConf(conf_: str) -> dict[str, str]:
-        confPath = "/root"
-        wg = wgconfig.WGConfig(os.path.join(confPath, conf_ + ".conf"))
-        wg.read_file()
-        interface = wg.get_interface()
-        peer = wg.get_peer(wg.get_peers()[0])
-
-        return {**interface, **peer}
+        userConf = WgConfServiceClient.getClientConf(conf_)
+        return json.loads(userConf)
     
     @staticmethod
     def makeConf(mail: str, deviceId: str) -> str:
         confName = deviceId
-        subprocess.run(["/root/./wireguard_cl_add.sh", confName])
+        #subprocess.run(["/root/./wireguard_cl_add.sh", confName])
+        WgConfServiceClient.createClientConf(deviceId)
         return confName
 
     @staticmethod
@@ -89,7 +87,8 @@ class VPNManager:
         try:
             removed = datamanager.removeDevice(deviceId, email)
             if removed:
-                subprocess.run(["/root/./wireguard_cl_delete.sh", deviceId])
+                #subprocess.run(["/root/./wireguard_cl_delete.sh", deviceId])
+                WgConfServiceClient.deleteClientConf(deviceId)
                 return removed
         except Exception as e:
             logger.exception(f"Error while removing device: {deviceId}")
