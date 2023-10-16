@@ -78,7 +78,7 @@ class VPNManager:
                 "devoce_type" : device.d_type,
 
             }
-        devices_.append(d)
+            devices_.append(d)
 
         return devices_
     
