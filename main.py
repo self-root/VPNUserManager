@@ -29,6 +29,9 @@ def login():
     # Send user vpn config
     
     app.logger.info(f"{request.remote_addr} Login request")
+    authHeaders = request.headers
+    for h in authHeaders.keys():
+        app.logger.info("Header_key: {h}")
     if Utility.hasAuthHeader(request.headers):
         auth = Auth.getAuth(request.headers.get("Authorization"))
         return UserManager.login(auth)

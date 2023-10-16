@@ -16,7 +16,7 @@ class Utility:
         Returns:
             bool: True if 'Authorization' header is present, False otherwise.
         """
-        logger.debug(f"Headers: {requestHeader.keys()}")
+        logger.info(f"Headers: {requestHeader.keys()}")
         return  "Authorization" in requestHeader.keys()
     
     @staticmethod
