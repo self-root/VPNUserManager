@@ -67,7 +67,7 @@ class VPNManager:
     
     @staticmethod
     def getDevices(email : str) -> list[dict[str,str]]:
-        devices = datamanager.getDevices(mail)
+        devices = datamanager.getDevices(email)
         # TODO: convert devices into dict
         devices_ = []
         for device in devices:
