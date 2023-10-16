@@ -1,0 +1,3 @@
+[submodule "wg_client_service"]
+	path = wg_client_service
+	url = https://github.com/self-root/wg_client_service.git
