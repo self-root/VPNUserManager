@@ -100,8 +100,9 @@ def addUserDevice(mail: str, device: dict[str, str]) -> Device:
 def removeDevice(deviceId: str, mail: str):
     with db:
         device = getDevice(deviceId)
-        if device.user.mail == mail:
-            device.delete_instance()
+        if device:
+            if device.user.mail == mail:
+                device.delete_instance()
 
 def addSubscription(mail: str, untilDate: datetime.date):
     with db:

@@ -184,10 +184,17 @@ def removeDevice(device_id: str):
         
         authResult = auth.authenticate()
         if authResult.errCode == AuthErrCode.SUCCESS:
-            pass # Remove device
+           app.logger.info(f"{authResult.mail} removing device: {device_id}")
+           VPNManager.removeDevice(authResult.mail, device_id)
+           return "Device deleted", 200
 
         else:
-            pass
+            result = {
+                    "error": "invalid_token",
+                    "error_description": "An access token is require in the auth header to make this request"
+                }
+            app.logger.info(f"{authResult.mail}: invalid_token")
+            return result, 401
     else:
         return "bad request", 400
     

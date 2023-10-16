@@ -82,6 +82,11 @@ class VPNManager:
         devices_.append(d)
 
         return devices_
+    
+    @staticmethod
+    def removeDevice(email: str, deviceId : str):
+        datamanager.removeDevice(deviceId, email)
+        subprocess.run(["/root/./wireguard_cl_delete.sh", deviceId])
 
 
 if __name__=="__main__":
