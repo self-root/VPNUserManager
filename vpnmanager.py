@@ -3,6 +3,7 @@ import datamanager
 import datetime
 import os
 import subprocess
+from mlogger import logger
 
 class VPNManager:
     @staticmethod
@@ -84,9 +85,14 @@ class VPNManager:
         return devices_
     
     @staticmethod
-    def removeDevice(email: str, deviceId : str):
-        datamanager.removeDevice(deviceId, email)
-        subprocess.run(["/root/./wireguard_cl_delete.sh", deviceId])
+    def removeDevice(email: str, deviceId : str) -> str:
+        try:
+            removed = datamanager.removeDevice(deviceId, email)
+            if removed:
+                subprocess.run(["/root/./wireguard_cl_delete.sh", deviceId])
+                return removed
+        except Exception as e:
+            logger.exception(f"Error while removing device: {deviceId}")
 
 
 if __name__=="__main__":

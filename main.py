@@ -1,12 +1,10 @@
 from flask import Flask, request
-from flask.logging import default_handler
 import json
 from utils import Utility
 from auth import Auth, AuthType, AuthErrCode
 from apiexception import CodeDoesNotMatch, CodeExpired
 from usermanager import UserManager
 from mail import PostOffice
-from tokenfactory import Intent
 from vpnmanager import VPNManager
 from mlogger import handler
 import logging
@@ -185,8 +183,10 @@ def removeDevice(device_id: str):
         authResult = auth.authenticate()
         if authResult.errCode == AuthErrCode.SUCCESS:
            app.logger.info(f"{authResult.mail} removing device: {device_id}")
-           VPNManager.removeDevice(authResult.mail, device_id)
-           return "Device deleted", 200
+           removed = VPNManager.removeDevice(authResult.mail, device_id)
+           if removed:
+               return {"device": device_id}, 200
+           return {"device": device_id}, 204
 
         else:
             result = {
