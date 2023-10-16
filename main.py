@@ -32,6 +32,7 @@ def login():
     if Utility.hasAuthHeader(request.headers):
         auth = Auth.getAuth(request.headers.get("Authorization"))
         return UserManager.login(auth)
+    return "Bad request", 400
     
 @app.post("/vpn/signup")
 def signup():
