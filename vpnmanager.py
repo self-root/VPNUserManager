@@ -4,7 +4,7 @@ import datetime
 import os
 import subprocess
 from mlogger import logger
-from .wg_client_service.wg_conf_client import WgConfServiceClient
+from wg_client_service.wg_conf_client import WgConfServiceClient
 import json
 
 class VPNManager:
