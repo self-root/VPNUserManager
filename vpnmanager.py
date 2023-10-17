@@ -75,7 +75,7 @@ class VPNManager:
                 "device_id" : device.d_id,
                 "device_os" : device.d_os,
                 "device_name" : device.d_name,
-                "devoce_type" : device.d_type,
+                "device_type" : device.d_type,
 
             }
             devices_.append(d)
