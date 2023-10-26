@@ -55,6 +55,11 @@ def signup():
             return response, 400
         except Exception as e:
             app.logger.exception("Error with signup")
+            response = {
+                "error": "server_error",
+                "error_description": e
+            }
+            return response, 500
     else:
         app.logger.critical(f"{signup.__name__}: Payload too large, size = {contentLength}")
         return "payload_too_large", 413
