@@ -57,7 +57,7 @@ def signup():
             app.logger.exception("Error with signup")
             response = {
                 "error": "server_error",
-                "error_description": e
+                "error_description": str(e)
             }
             return response, 500
     else:

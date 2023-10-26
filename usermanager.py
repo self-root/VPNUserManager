@@ -77,7 +77,7 @@ class UserManager:
                     logger.exception("handleSignup: exception")
                     response = {
                         "error": "server_error",
-                        "error_description": e
+                        "error_description": str(e)
                     }
                     logger.exception("handleSignup: exception")
                     return response, 500
