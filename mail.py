@@ -69,7 +69,7 @@ class PostOffice:
     
     @staticmethod
     def renderMailBody(mailType: MailType, content: dict[str, str]) -> str:
-        template_path = os.path.join(os.getcwd(), "templates")
+        template_path = "/var/www/html/groot/templates/"
         env = Environment(loader=FileSystemLoader(template_path))
         template = None
         if mailType == MailType.VERIFICATION:
