@@ -1,6 +1,7 @@
 import re
 import secrets
 import redis
+import os
 import smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -68,7 +69,8 @@ class PostOffice:
     
     @staticmethod
     def renderMailBody(mailType: MailType, content: dict[str, str]) -> str:
-        env = Environment(loader=FileSystemLoader("templates/"))
+        template_path = os.path.join(os.getcwd(), "templates")
+        env = Environment(loader=FileSystemLoader(template_path))
         template = None
         if mailType == MailType.VERIFICATION:
             template = env.get_template("verification.html")
