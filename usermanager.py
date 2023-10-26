@@ -70,11 +70,17 @@ class UserManager:
                         "error": "conflict",
                         "error_description": "Email address already registered"
                     }
-                    logger.exception(f"handleSignup: exception")
+                    logger.exception("handleSignup: exception")
                     return response, 409
                 
                 except Exception as e:
-                    logger.exception(f"handleSignup: exception")
+                    logger.exception("handleSignup: exception")
+                    response = {
+                        "error": "server_error",
+                        "error_description": e
+                    }
+                    logger.exception("handleSignup: exception")
+                    return response, 500
                 
             else:
                 print(f"Invalid mail {form['mail']}")
