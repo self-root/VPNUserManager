@@ -63,7 +63,7 @@ class UserManager:
                     datamanager.saveUser(email, password)
                     #send verification mail to user
                     PostOffice.sendVerificationMail(email)
-                    #create temporary token
+
                     return "added", 200
                 except IntegrityError as e:
                     response = {

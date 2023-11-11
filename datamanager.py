@@ -43,6 +43,9 @@ def saveUser(mail: str, password: str):
         pwd = Utility.hashPassword(password)
         user = User.create(mail=mail, password=pwd)
         user.save()
+        today = datetime.date.today()
+        endTempSub = today + datetime.timedelta(days=2)
+        addSubscription(mail, endTempSub)
 
 def setUserVerified(mail: str):
     with db:
