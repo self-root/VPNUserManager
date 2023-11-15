@@ -23,6 +23,19 @@ class TokenFactory:
             print ("Token verification error: ", e)
 
     @staticmethod
+    def verify(token: str) -> str:
+        try:
+            payload = jwt.decode(token, os.getenv("VPN_TOKEN_KEY"), algorithms=["HS256"])
+            return payload["username"]
+        
+        except jwt.InvalidTokenError as e:
+            print(f"Invalid signature: {e}")
+
+        except Exception as e:
+            print ("Token verification error: ", e)
+
+
+    @staticmethod
     def cretateVerifiedUserToken(mail : str):
         return TokenFactory.create({
             "mail": mail,
@@ -30,6 +43,16 @@ class TokenFactory:
             "verified": "1",
             "iss": "irootsoftware"
         })
+    
+    @staticmethod
+    def createAdminToken(username: str) -> str:
+        return TokenFactory.create(
+            {
+                "username": username,
+                "exp": datetime.datetime.now() + datetime.timedelta(days=7),
+                "iss": "irootsoftware"
+            }
+        )
     
     @staticmethod
     def createUnverifiedUserToken(mail: str) -> str:
