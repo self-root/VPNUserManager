@@ -56,6 +56,10 @@ def setUserVerified(mail: str):
 def getDevices(mail: str):
     with db:
         return (Device.select(Device, User).join(User).where(Device.user.mail==mail))
+    
+def getUsers() -> dict:
+    with db:
+        return User.select().dicts()
 
 def getDevice(deviceId: str) -> Device:
     with db:
