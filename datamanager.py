@@ -33,6 +33,10 @@ class Device(BaseModel):
     user = ForeignKeyField(User)
     config = CharField(max_length=200, unique=True)
 
+class Admin(BaseModel):
+    username = CharField(max_length=100, null=False)
+    password = CharField(max_length=64, null=False)
+
 #class Config(BaseModel):
 #    conf = CharField(max_length=100, unique=True)
 #    device = ForeignKeyField(Device)
