@@ -145,7 +145,7 @@ if __name__ == "__main__":
         #user = User.create(mail="oscar.thegreat@outlook.com", verified=True, password="12345")
         #user.save()
         #db.drop_tables([Device])
-        db.create_tables([User, Subscription, Device])
+        db.create_tables([User, Subscription, Device, Admin])
         #device = Device.create(d_id="moto_3328", user=1)
         #conf_ = Config.create(conf="oscar12ww4.conf", device=2)
         #query = (Device.select(Device, User).join(User).where(Device.user.mail == "oscarmendeleiev@gmail.com"))
