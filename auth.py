@@ -1,9 +1,10 @@
 from tokenfactory import TokenFactory, Intent
-from datamanager import User
+from datamanager import User, Admin
 import base64
 from apiexception import UnverifiedUser, UserNotFound, InvalidToken
 from enum import Enum
 from utils import Utility
+from abc import ABC, abstractmethod
 
 class AuthType(Enum):
     BASIC = 1
@@ -23,23 +24,44 @@ class AuthResult:
         self.token = ''
         self.mail = ''
 
-class Auth:
-    def __init__(self, atype : AuthType, value : str) -> None:
+class AuthBase(ABC):
+    def __init__(self, atype: AuthType, value: str) -> None:
         self.atype = atype
         self.value = value
-        self.mail = ""
 
-    def authenticate(self, intent=Intent.LOGIN) -> AuthResult:
-        """
-        Authenticate the user. Return a token or raise an exception
+    @abstractmethod
+    def authenticate(self) -> AuthResult:
+        pass
+    
+    @abstractmethod
+    def basicAuth(self) -> AuthResult:
+        pass
 
-        Returns:
-            str: a new token or the existing token if still valid
+    @staticmethod
+    def getBasicCredentials(basicAuthHeader: str) -> tuple:
         """
+            Parse value of a Basic authentication (username:password),
+            and return a tuple containing (username, password)
+            Param:
+                basicAuthHeader: base64 encoded 'username:password' credentials
+            Return:
+                tuple containing username and password
+        """
+        decodedBytes = base64.b64decode(basicAuthHeader)
+        print(f"Basic header decoded: {decodedBytes}")
+        basicHeader = decodedBytes.decode()
+        return basicHeader.split(":", 1)
+
+class AdminAuth(AuthBase):
+    def __init__(self, atype: AuthType, value: str) -> None:
+        super().__init__(atype, value)
+        self.username = ""
+
+    def authenticate(self) -> AuthResult:
         if self.atype == AuthType.BASIC:
-            return self._basicAuth()
+            return self.basicAuth()
         elif self.atype == AuthType.BEARER:           
-            verfyResult = TokenFactory.veryfy(self.value, intent)
+            verfyResult = TokenFactory.verifyaAdmin(self.value)
             if verfyResult:
                 authResult = AuthResult()
                 authResult.errCode = AuthErrCode.SUCCESS
@@ -50,17 +72,60 @@ class Auth:
         else:
             return AuthResult(AuthErrCode.BAD_REQUEST)
         
-    def _basicAuth(self) -> AuthResult:
+    def basicAuth(self) -> AuthResult:
+        credentials =  AuthBase.getBasicCredentials(self.value)
+        authResult = AuthResult()
+        if len(credentials) != 2:
+            authResult.errCode = AuthErrCode.BAD_REQUEST
+            return authResult
+        self.username, password = credentials
+        self.username = self.username.replace(" ", "")
+        password = password.replace(" ", "")
+        authResult.mail = self.username
+        user = Admin.get_or_none(username=self.username, password=Utility.hashPassword(password))
+        if user:
+            authResult.token = TokenFactory.createAdminToken(self.password)
+            authResult.errCode = AuthErrCode.SUCCESS
+                
+        else:
+            authResult.errCode = AuthErrCode.NO_USER
+            
+        return authResult
+
+class Auth(AuthBase):
+    def __init__(self, atype: AuthType, value: str) -> None:
+        super().__init__(atype, value)
+        self.mail = ""
+
+    def authenticate(self) -> AuthResult:
+        """
+        Authenticate the user. Return a token or raise an exception
+
+        Returns:
+            str: a new token or the existing token if still valid
+        """
+        if self.atype == AuthType.BASIC:
+            return self.basicAuth()
+        elif self.atype == AuthType.BEARER:           
+            verfyResult = TokenFactory.veryfy(self.value)
+            if verfyResult:
+                authResult = AuthResult()
+                authResult.errCode = AuthErrCode.SUCCESS
+                authResult.token, authResult.mail = verfyResult
+                return authResult
+            else:
+                return AuthResult(AuthErrCode.INVALID_TOKEN)
+        else:
+            return AuthResult(AuthErrCode.BAD_REQUEST)
+        
+    def basicAuth(self) -> AuthResult:
         """
         Authenticate user with mail and password
 
         Returns:
             AuthResult: an object containing an error code and the user token if auth successfull
         """
-        decodedBytes = base64.b64decode(self.value)
-        print(f"Basic header decoded: {decodedBytes}")
-        basicHeader = decodedBytes.decode()
-        credentials =  basicHeader.split(":", 1)
+        credentials =  AuthBase.getBasicCredentials(self.value)
         authResult = AuthResult()
         if len(credentials) != 2:
             authResult.errCode = AuthErrCode.BAD_REQUEST

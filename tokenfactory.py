@@ -10,7 +10,7 @@ class Intent(Enum):
 
 class TokenFactory:
     @staticmethod
-    def veryfy(token: str, intent=Intent.LOGIN) -> tuple:
+    def veryfy(token: str) -> tuple:
         try:
             payload = jwt.decode(token, os.getenv("VPN_TOKEN_KEY"), algorithms=["HS256"])
             print(f"Payload: {payload}")
@@ -23,7 +23,7 @@ class TokenFactory:
             print ("Token verification error: ", e)
 
     @staticmethod
-    def verify(token: str) -> str:
+    def verifyaAdmin(token: str) -> str:
         try:
             payload = jwt.decode(token, os.getenv("VPN_TOKEN_KEY"), algorithms=["HS256"])
             return payload["username"]
