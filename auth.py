@@ -105,7 +105,7 @@ class AdminAuth(AuthBase):
         authResult.mail = self.username
         user = Admin.get_or_none(username=self.username, password=Utility.hashPassword(password))
         if user:
-            authResult.token = TokenFactory.createAdminToken(self.password)
+            authResult.token = TokenFactory.createAdminToken(password)
             authResult.mail = self.username
             authResult.errCode = AuthErrCode.SUCCESS
                 
