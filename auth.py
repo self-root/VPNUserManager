@@ -52,8 +52,8 @@ class AuthBase(ABC):
         basicHeader = decodedBytes.decode()
         return basicHeader.split(":", 1)
     
-    @staticmethod
-    def getAuth(auth : str):
+    @classmethod
+    def getAuth(cls ,auth : str):
         """
         Parse and extract authentication information from the input string.
 
@@ -67,11 +67,11 @@ class AuthBase(ABC):
         splited = auth.split(" ")
         if len(splited) == 2:
             if splited[0] == "Basic":
-                return Auth(AuthType.BASIC, splited[1])
+                return cls(AuthType.BASIC, splited[1])
             elif splited[0] == "Bearer":
-                return Auth(AuthType.BEARER, splited[1])
+                return cls(AuthType.BEARER, splited[1])
 
-        return Auth(AuthType.NONE, "")
+        return cls(AuthType.NONE, "")
 
 class AdminAuth(AuthBase):
     def __init__(self, atype: AuthType, value: str) -> None:

@@ -209,7 +209,7 @@ def removeDevice(device_id: str):
 def adminLogin():
     authHeaders = request.headers
     if Utility.hasAuthHeader(request.headers):
-        auth = AdminAuth(AdminAuth.getAuth(request.headers.get("Authorization")))
+        auth = AdminAuth.getAuth(request.headers.get("Authorization"))
         authResult = auth.authenticate()
         if authResult.errCode == AuthErrCode.SUCCESS:
             res = {
