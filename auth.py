@@ -51,6 +51,27 @@ class AuthBase(ABC):
         print(f"Basic header decoded: {decodedBytes}")
         basicHeader = decodedBytes.decode()
         return basicHeader.split(":", 1)
+    
+    @staticmethod
+    def getAuth(auth : str):
+        """
+        Parse and extract authentication information from the input string.
+
+        Args:
+            auth (str): The authentication string in the format 'Basic <value>' or 'Bearer <value>'.
+
+        Returns:
+            Auth: An Auth object containing the authentication type and value.
+        """
+        print(f"Auth header: {auth}")
+        splited = auth.split(" ")
+        if len(splited) == 2:
+            if splited[0] == "Basic":
+                return Auth(AuthType.BASIC, splited[1])
+            elif splited[0] == "Bearer":
+                return Auth(AuthType.BEARER, splited[1])
+
+        return Auth(AuthType.NONE, "")
 
 class AdminAuth(AuthBase):
     def __init__(self, atype: AuthType, value: str) -> None:
@@ -85,11 +106,12 @@ class AdminAuth(AuthBase):
         user = Admin.get_or_none(username=self.username, password=Utility.hashPassword(password))
         if user:
             authResult.token = TokenFactory.createAdminToken(self.password)
+            authResult.mail = self.username
             authResult.errCode = AuthErrCode.SUCCESS
                 
         else:
             authResult.errCode = AuthErrCode.NO_USER
-            
+
         return authResult
 
 class Auth(AuthBase):
@@ -150,23 +172,4 @@ class Auth(AuthBase):
     def makeTempToken(self):
         return TokenFactory.createUnverifiedUserToken(self.mail)
     
-    @staticmethod
-    def getAuth(auth : str):
-        """
-        Parse and extract authentication information from the input string.
-
-        Args:
-            auth (str): The authentication string in the format 'Basic <value>' or 'Bearer <value>'.
-
-        Returns:
-            Auth: An Auth object containing the authentication type and value.
-        """
-        print(f"Auth header: {auth}")
-        splited = auth.split(" ")
-        if len(splited) == 2:
-            if splited[0] == "Basic":
-                return Auth(AuthType.BASIC, splited[1])
-            elif splited[0] == "Bearer":
-                return Auth(AuthType.BEARER, splited[1])
-
-        return Auth(AuthType.NONE, "")
+    

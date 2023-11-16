@@ -1,7 +1,7 @@
 from flask import Flask, request
 import json
 from utils import Utility
-from auth import Auth, AuthType, AuthErrCode
+from auth import Auth, AuthType, AuthErrCode, AdminAuth
 from apiexception import CodeDoesNotMatch, CodeExpired
 from usermanager import UserManager
 from mail import PostOffice
@@ -30,8 +30,6 @@ def login():
     
     app.logger.info(f"{request.remote_addr} Login request")
     authHeaders = request.headers
-    for h in authHeaders.keys():
-        app.logger.info(f"Header_key: {h}")
     if Utility.hasAuthHeader(request.headers):
         auth = Auth.getAuth(request.headers.get("Authorization"))
         return UserManager.login(auth)
@@ -206,6 +204,23 @@ def removeDevice(device_id: str):
             return result, 401
     else:
         return "bad request", 400
+    
+@app.get("/vpn/admin/login")
+def adminLogin():
+    authHeaders = request.headers
+    if Utility.hasAuthHeader(request.headers):
+        auth = AdminAuth(AdminAuth.getAuth(request.headers.get("Authorization")))
+        authResult = auth.authenticate()
+        if authResult.errCode == AuthErrCode.SUCCESS:
+            res = {
+                'username': authResult.mail,
+                'token': authResult.token
+            }
+            return res, 200
+        
+        return "Unauthorized", 401
+
+    return "Bad request", 400
     
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
