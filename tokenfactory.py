@@ -26,7 +26,7 @@ class TokenFactory:
     def verifyaAdmin(token: str) -> str:
         try:
             payload = jwt.decode(token, os.getenv("VPN_TOKEN_KEY"), algorithms=["HS256"])
-            return payload["username"]
+            return payload["username"], token
         
         except jwt.InvalidTokenError as e:
             print(f"Invalid signature: {e}")

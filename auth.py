@@ -1,7 +1,6 @@
 from tokenfactory import TokenFactory, Intent
 from datamanager import User, Admin
 import base64
-from apiexception import UnverifiedUser, UserNotFound, InvalidToken
 from enum import Enum
 from utils import Utility
 from abc import ABC, abstractmethod
@@ -86,7 +85,7 @@ class AdminAuth(AuthBase):
             if verfyResult:
                 authResult = AuthResult()
                 authResult.errCode = AuthErrCode.SUCCESS
-                authResult.token, authResult.mail = verfyResult
+                authResult.mail, authResult.token = verfyResult
                 return authResult
             else:
                 return AuthResult(AuthErrCode.INVALID_TOKEN)
