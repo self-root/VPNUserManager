@@ -223,7 +223,7 @@ def adminLogin():
 
     return "Bad request", 400
 
-@app.get("/vpn/admin.users/")
+@app.get("/vpn/admin/users")
 def getUsers():
     authHeaders = request.headers
     if Utility.hasAuthHeader(request.headers):
