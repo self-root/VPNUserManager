@@ -61,9 +61,9 @@ def getDevices(mail: str):
     with db:
         return (Device.select(Device, User).join(User).where(Device.user.mail==mail))
     
-def getUsers() -> dict:
+def getUsers() -> list:
     with db:
-        return User.select().dicts()
+        return list(User.select().dicts())
 
 def getDevice(deviceId: str) -> Device:
     with db:

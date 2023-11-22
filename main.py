@@ -8,6 +8,7 @@ from mail import PostOffice
 from vpnmanager import VPNManager
 from mlogger import handler
 import logging
+import datamanager
 
 app = Flask(__name__)
 app.logger.addHandler(handler)
@@ -220,6 +221,22 @@ def adminLogin():
         
         return "Unauthorized", 401
 
+    return "Bad request", 400
+
+@app.get("/vpn/admin.users/")
+def getUsers():
+    authHeaders = request.headers
+    if Utility.hasAuthHeader(request.headers):
+        auth = AdminAuth.getAuth(request.headers.get("Authorization"))
+        authResult = auth.authenticate()
+        if authResult.errCode == AuthErrCode.SUCCESS:
+            res = {
+                "users" : datamanager.getUsers()
+            }
+            return res, 200
+        
+        return "Unauthorized", 401
+    
     return "Bad request", 400
     
 if __name__ == "__main__":

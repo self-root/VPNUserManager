@@ -1,7 +1,6 @@
 from werkzeug.datastructures import Headers
 import os
 import hashlib
-from mlogger import logger
 
 class Utility:
 
@@ -16,7 +15,6 @@ class Utility:
         Returns:
             bool: True if 'Authorization' header is present, False otherwise.
         """
-        logger.info(f"Headers: {requestHeader.keys()}")
         return  "Authorization" in requestHeader.keys()
     
     @staticmethod
