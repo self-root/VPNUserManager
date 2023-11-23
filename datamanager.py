@@ -63,7 +63,8 @@ def getDevices(mail: str):
     
 def getUsers() -> list:
     with db:
-        return list(User.select().dicts())
+        query = (User.select(User, Subscription).join(Subscription).where(User.id == Subscription.user_id))
+        return list(query.dicts())
 
 def getDevice(deviceId: str) -> Device:
     with db:
