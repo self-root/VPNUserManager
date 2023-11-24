@@ -100,7 +100,7 @@ class VPNManager:
         for device in devices:
             deviceId = device.d_id
             confName = datamanager.getDeviceConf(email, deviceId)
-            conf = json.loads(VPNManager.parseConf(confName))
+            conf = VPNManager.parseConf(confName)
             keys = conf["presharedKey"]
         status = []
         for k in keys:
