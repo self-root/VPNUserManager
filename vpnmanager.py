@@ -101,7 +101,7 @@ class VPNManager:
             deviceId = device.d_id
             confName = datamanager.getDeviceConf(email, deviceId)
             conf = VPNManager.parseConf(confName)
-            keys = conf["presharedKey"]
+            keys = conf["PresharedKey"]
         status = []
         for k in keys:
             s = json.loads(WgConfServiceClient.getPeerStatus(k))
