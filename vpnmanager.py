@@ -93,10 +93,23 @@ class VPNManager:
         except Exception as e:
             logger.exception(f"Error while removing device: {deviceId}")
 
+    @staticmethod
+    def getPeerStatus(email: str):
+        devices = datamanager.getDevices(email)
+        keys = []
+        for device in devices:
+            deviceId = device.d_id
+            confName = datamanager.getDeviceConf(email, deviceId)
+            conf = json.loads(VPNManager.parseConf(confName))
+            keys = conf["presharedKey"]
+        status = []
+        for k in keys:
+            s = json.loads(WgConfServiceClient.getPeerStatus(k))
+            status.append(s)
+        
+        return status
+
 
 if __name__=="__main__":
     #VPNManager.getUserConf("s", "d")
-    mail = "oscarmendeleiev@gmail.com"
-    mail2 = "root00.localhost@protonmail.com"
-    print(f"Has sub: {VPNManager.hasActiveSubsciption(mail)}")
-    print(f"Has sub2: {VPNManager.hasActiveSubsciption(mail2)}")
+    print(VPNManager.getPeerStatus("root00.localhost@protonmail.com"))
