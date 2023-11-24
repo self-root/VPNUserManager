@@ -104,9 +104,10 @@ class VPNManager:
             keys.append(conf["PresharedKey"])
         status = []
         for k in keys:
-            s = json.loads(WgConfServiceClient.getPeerStatus(k))
-            status.append(s)
-
+            #s = json.loads(WgConfServiceClient.getPeerStatus(k))
+            #status.append(s)
+            print(f"Key: {k}")
+            print(WgConfServiceClient.getPeerStatus(k))
         return status
 
 
