@@ -238,6 +238,18 @@ def getUsers():
         return "Unauthorized", 401
     
     return "Bad request", 400
+
+@app.get("/vpn/admin/peer/status/<email>")
+def getPeerStatus(email: str):
+    authHeaders = request.headers
+    if Utility.hasAuthHeader(request.headers):
+        auth = AdminAuth.getAuth(request.headers.get("Authorization"))
+        authResult = auth.authenticate()
+        if authResult.errCode == AuthErrCode.SUCCESS:
+            status = VPNManager.getPeerStatus(email)
+            return status, 200
+        return "Unauthorized", 401
+    return "Bad request", 400
     
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
