@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 import json
 from utils import Utility
 from auth import Auth, AuthType, AuthErrCode, AdminAuth
@@ -205,6 +205,10 @@ def removeDevice(device_id: str):
             return result, 401
     else:
         return "bad request", 400
+    
+@app.get("/stealthlink/privacypolicy")
+def privacyPolicy():
+    return render_template("privacy_policy.html")
     
 @app.get("/vpn/admin/login")
 def adminLogin():
