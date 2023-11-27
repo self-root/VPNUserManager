@@ -247,7 +247,11 @@ def getPeerStatus(email: str):
         authResult = auth.authenticate()
         if authResult.errCode == AuthErrCode.SUCCESS:
             status = VPNManager.getPeerStatus(email)
-            return status, 200
+            res = {
+                "email": email,
+                "status": status
+            }
+            return res, 200
         return "Unauthorized", 401
     return "Bad request", 400
     
