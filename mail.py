@@ -41,18 +41,18 @@ class MailType(Enum):
     VERIFICATION = 1
     ACCOUNT_ACTIVATED = 2
     SUBSCRIPTION = 3
+    PASSWORD_RESET = 4
 
 class PostOffice:
     @staticmethod
-    def sendVerificationMail(mail: str):
+    def sendVerificationMail(mail: str, subject: str, intent: MailType):
         verificationCode = PostOffice.generateRandomDigits()
         PostOffice.saveVerificationCode(mail, verificationCode)
-        print("User mail: ", mail)
         verifMail = Mail(
-            "Verifiy email",
+            subject,
             mail,
-            PostOffice.renderMailBody(MailType.VERIFICATION, {"code": verificationCode}))
-        asyncio.run(verifMail.send()) 
+            PostOffice.renderMailBody(intent, {"code": verificationCode}))
+        asyncio.run(verifMail.send())
 
     @staticmethod
     def generateRandomDigits() -> int:
@@ -74,6 +74,10 @@ class PostOffice:
         template = None
         if mailType == MailType.VERIFICATION:
             template = env.get_template("verification.html")
+            return template.render(content)
+        
+        elif mailType == MailType.PASSWORD_RESET:
+            template = env.get_template("password_reset.html")
             return template.render(content)
     
     @staticmethod
