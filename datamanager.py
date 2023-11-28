@@ -137,7 +137,15 @@ def getEndSub(mail: str) -> datetime.date:
             sub = Subscription.get_or_none(user=user_.id)
             if sub:
                 return sub.end_sub
-        
+            
+def updateUserPassword(mail: str, pwd: str) -> bool:
+    with db:
+        user = User.get_or_none(mail=mail)
+        if user:
+            user.password = pwd
+            user.save()
+            return True
+        return False
 
 
 if __name__ == "__main__":

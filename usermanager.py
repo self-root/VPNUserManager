@@ -4,6 +4,7 @@ from peewee import IntegrityError
 from tokenfactory import TokenFactory
 from auth import Auth, AuthErrCode
 from mlogger import logger
+from utils import Utility
 
 class UserManager:
     @staticmethod
@@ -104,6 +105,11 @@ class UserManager:
             PostOffice.sendVerificationMail(mail, MailType.PASSWORD_RESET)
             return True
         return False
+    
+    @staticmethod
+    def resetPassword(email: str, verifCode: str, newPwd: str) -> bool:
+        if verifCode == PostOffice.getVerivicationCode(email):
+            return datamanager.updateUserPassword(email, Utility.hashPassword(newPwd))
         
     @staticmethod
     def makeUserToken(mail: str) -> str:

@@ -211,6 +211,30 @@ def resetpwdRequest(email: str):
     if UserManager.sendPasswordRequestMail(email):
         return "Success", 200
     return "Not found", 404
+
+@app.post("/vpn/user/resetpassword")
+def resetPassword():
+    contentLength = request.headers.get("Content-Length", type=int)
+    if contentLength >= 250:
+        return "Payload too large", 413
+    
+    try:
+        form = json.loads(request.data)
+        success = UserManager.resetPassword(form["mail"], form["pwd"])
+        if success:
+            return "Success", 200
+        
+        return "Verification may be wrong or user does not exist", 404
+    except json.JSONDecodeError:
+        res = {
+            "error": "Bad request",
+            "error_description": "Need a valid json data in the request body"
+        }
+        return res, 401
+    except Exception as e:
+        app.logger.exception(f"Exception occured: {e}")
+        return "Internal server error", 500
+
     
 @app.get("/stealthlink/privacypolicy")
 def privacyPolicy():
@@ -218,7 +242,6 @@ def privacyPolicy():
     
 @app.get("/vpn/admin/login")
 def adminLogin():
-    authHeaders = request.headers
     if Utility.hasAuthHeader(request.headers):
         auth = AdminAuth.getAuth(request.headers.get("Authorization"))
         authResult = auth.authenticate()
@@ -235,7 +258,6 @@ def adminLogin():
 
 @app.get("/vpn/admin/users")
 def getUsers():
-    authHeaders = request.headers
     if Utility.hasAuthHeader(request.headers):
         auth = AdminAuth.getAuth(request.headers.get("Authorization"))
         authResult = auth.authenticate()
@@ -251,7 +273,6 @@ def getUsers():
 
 @app.get("/vpn/admin/peer/status/<email>")
 def getPeerStatus(email: str):
-    authHeaders = request.headers
     if Utility.hasAuthHeader(request.headers):
         auth = AdminAuth.getAuth(request.headers.get("Authorization"))
         authResult = auth.authenticate()
