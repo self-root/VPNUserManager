@@ -206,6 +206,12 @@ def removeDevice(device_id: str):
     else:
         return "bad request", 400
     
+@app.get("/vpn/user/resetpwdrequest/<email>")
+def resetpwdRequest(email: str):
+    if UserManager.sendPasswordRequestMail(email):
+        return "Success", 200
+    return "Not found", 404
+    
 @app.get("/stealthlink/privacypolicy")
 def privacyPolicy():
     return render_template("privacy_policy.html")

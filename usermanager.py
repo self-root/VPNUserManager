@@ -1,4 +1,4 @@
-from mail import PostOffice
+from mail import PostOffice, MailType
 import datamanager
 from peewee import IntegrityError
 from tokenfactory import TokenFactory
@@ -96,6 +96,14 @@ class UserManager:
                     }
             logger.warning(f"Signup {email}: Email address not valid")
             return response, 400
+        
+    @staticmethod
+    def sendPasswordRequestMail(mail: str) -> bool:
+        user = datamanager.User.get_or_none(mail=mail)
+        if user:
+            PostOffice.sendVerificationMail(mail, MailType.PASSWORD_RESET)
+            return True
+        return False
         
     @staticmethod
     def makeUserToken(mail: str) -> str:
