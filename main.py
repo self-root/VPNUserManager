@@ -220,7 +220,7 @@ def resetPassword():
     
     try:
         form = json.loads(request.data)
-        success = UserManager.resetPassword(form["mail"], form["pwd"])
+        success = UserManager.resetPassword(form["mail"], form["verifcode"] ,form["pwd"])
         if success:
             return "Success", 200
         
