@@ -44,12 +44,17 @@ class MailType(Enum):
     PASSWORD_RESET = 4
 
 class PostOffice:
+    mailSubjects = {
+        MailType.VERIFICATION : "StealthLink account - Email Verification Required",
+        MailType.PASSWORD_RESET: "Password Reset Request - Verification Code",
+    }
+
     @staticmethod
-    def sendVerificationMail(mail: str, subject: str, intent: MailType):
+    def sendVerificationMail(mail: str, intent = MailType.VERIFICATION):
         verificationCode = PostOffice.generateRandomDigits()
         PostOffice.saveVerificationCode(mail, verificationCode)
         verifMail = Mail(
-            subject,
+            PostOffice.mailSubjects[intent],
             mail,
             PostOffice.renderMailBody(intent, {"code": verificationCode}))
         asyncio.run(verifMail.send())
