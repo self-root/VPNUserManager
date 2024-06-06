@@ -14,7 +14,7 @@ class Mail:
     def __init__(self, subject: str, to: str, body: str) -> None:
         self.subject = subject
         self.__from = "irootsoftware@gmail.com"
-        self.__pwd = "olcxknzixncgyfec"
+        self.__pwd = "gbyrqzvhdwsrrskc"
         self.__host = "smtp.gmail.com"
         self.__port = 465 #587
         self.to = to
