@@ -13,10 +13,10 @@ import asyncio
 class Mail:
     def __init__(self, subject: str, to: str, body: str) -> None:
         self.subject = subject
-        self.__from = "irootsoftware@gmail.com"
-        self.__pwd = "gbyrqzvhdwsrrskc"
-        self.__host = "smtp.gmail.com"
-        self.__port = 465 #587
+        self.__from = os.getenv("IROOT_EMAIL")
+        self.__pwd = os.getenv("IROOT_PWD")
+        self.__host = os.getenv("EMAIL_HOST")
+        self.__port = os.getenv("EMAIL_PORT")
         self.to = to
         self.body = body
 
